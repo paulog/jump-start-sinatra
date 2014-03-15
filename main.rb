@@ -8,9 +8,8 @@ configure do
   enable :sessions
   set :username, 'frank'
   set :password, 'sinatra'
+  use Rack::Session::Cookie, :secret => "Now it's working! 1337"
 end
-
-set :session_secret, 'This is some really hard to guess string.'
 
 get('/styles.css') { scss :styles}
 
