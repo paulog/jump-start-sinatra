@@ -11,6 +11,14 @@ configure do
   use Rack::Session::Cookie, :secret => "Now it's working! 1337"
 end
 
+configure :development do
+  DataMapper.setup(:default, "sqlite3://#{Dir.pwd}/development.db")
+end
+
+configure :production do
+  DataMapper.setup(:default, ENV['DATABASE_URL'])
+end
+
 get('/styles.css') { scss :styles}
 
 get '/login' do
