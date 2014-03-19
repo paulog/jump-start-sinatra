@@ -14,10 +14,26 @@ class Song
   end
 end
 
+module SongHelpers
+  def find_songs
+    @songs = Song.all
+  end
+
+  def find_song
+    Song.get(params[:id])
+  end
+
+  def create_song
+    @song = Song.create(params[:song])
+  end
+end
+
+helpers SongHelpers
+
 DataMapper.finalize
 
 get '/songs' do
-  @songs = Song.all
+  find_songs
   slim :songs
 end
 
@@ -28,32 +44,28 @@ get '/songs/new' do
 end
 
 get '/songs/:id' do
-  @song = Song.get(params[:id])
+  @song = find_song
   slim :show_song
 end
 
 post '/songs' do
-  halt(401, 'Not Authorized') unless session[:admin]
-  song = Song.create(params[:song])
+  create_song
   redirect to("/songs/#{song.id}")
 end
 
 get '/songs/:id/edit' do
-  halt(401, 'Not Authorized') unless session[:admin]
-  @song = Song.get(params[:id])
+  @song = find_song
   slim :edit_song
 end
 
 put '/songs/:id' do
-  halt(401, 'Not Authorized') unless session[:admin]
-  song = Song.get(params[:id])
+  song = find_song
   song.update(params[:song])
   redirect to("/songs/#{song.id}")
 end
 
 delete '/songs/:id' do
-  halt(401, 'Not Authorized') unless session[:admin]
-  Song.get(params[:id]).destroy
+  find_song.destroy
   redirect to('/songs')
 end
 
